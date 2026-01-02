@@ -1,0 +1,10 @@
+# Ignore build outputs and binaries
+raytracing
+*.o
+*.out
+
+# Editor and OS files
+*.swp
+*.swo
+*~
+.vscode/
