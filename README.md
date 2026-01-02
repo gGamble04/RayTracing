@@ -6,7 +6,7 @@ RayTracing is a simple C project that demonstrates basic ray tracing techniques 
 - Renders simple 2D scenes using ray tracing
 - Interactive light source
 
-![Example image](./raytraceexample.png)
+![Example image](./images/raytraceexample.png)
 
 ## Directory Structure
 ```
@@ -66,9 +66,9 @@ Gabe Gamble
 # Ray Generation and Intersection Computation
 
 Where given a `ray`, the number of rays to be generated `num_rays`, and the point `origin` from which each ray is emmited. Since rays are emmited in all directions ($360^\circ$) we can compute the angle $\Theta$ at which each `ray` need to be drawn:
-$$
-\Theta=\frac{360^\circ}{\text{num\_rays}}
-$$
+
+![Equation for theta](./images/ThetaEq.svg)
+
 Now, we can assume that a `ray` is represented by a position vector $\vec{O}=\langle{x,y}\rangle$ which is its origin, and a normalized direction vector $\vec{D}=\langle{\cos\Theta,\sin\Theta}\rangle$.
 
 ---
@@ -89,76 +89,62 @@ SDL_RenderDrawLine(ray.origin.x, ray.origin.y, end_x, end_y);
 ---
 
 ### Rays that do encounter obstacles
-Generating rays that do collide with an obstacle is slightly more involved. First, we need to check if a ray will collide with an obstace. Again, lets assume that a `ray` is represented by a position vector $\vec{O}=\langle{x,y}\rangle$, and a normalized direction vector $\vec{D}=\langle{\cos\Theta,\sin\Theta}\rangle$. Now lets introduce a circular `obstacle` that is represented by a position vector for its center $\vec{C}=\langle{x,y}\rangle$ and a radius $r$.
+Generating rays that do collide with an obstacle is slightly more involved. First, we need to check if a ray will collide with an obstace. Again, lets assume that a `ray` is represented by a position vector for its origin $\vec{O}=\langle{x,y}\rangle$, and a normalized direction vector $\vec{D}=\langle{\cos\Theta,\sin\Theta}\rangle$. Now lets introduce a circular `obstacle` that is represented by a position vector for its center $\vec{C}=\langle{x,y}\rangle$ and a radius $r$.
 
-![Illistration of described scenario](./ray_trace_img1.png)
+![Illistration of described scenario](./images/ray_trace_img1.png)
 
 From this, we can calculate a position vector $\vec{P}$ for any point along the ray:
-$$
-\vec{P}=\vec{O}+t\vec{D},\;t\geq0
-$$
+
+![Equation](./images/eq1.svg)
+
 Now, we can see that an intersetion with the object occurs when the distance between $\vec{P}$ and $\vec{C}$ is less than or equal to $r$, or:
-$$
-\|\vec{P}-\vec{C}\|\leq r
-$$
+
+![Equation](./images/eq2.svg)
+
 If we substitute $\vec{P}$ back into the equation, we have:
-$$
-\|(\vec{O}+t\vec{D})-\vec{C}\|\leq r
-$$
+
+![Equation](./images/eq3.svg)
+
 Since the `norm`, $\|\vec{P}-\vec{C}\|$ is just shorthand for the distance formula $d = \sqrt{(P_1-C_1)^2+(P_2-C_2)^2}$, we can square both sides to remove the square root.
-$$
-\|(\vec{O}+t\vec{D})-\vec{C}\|^2\leq r^2
-$$
+
+![Equation](./images/eq4.svg)
+
 To help simplify, we'll let $f=\vec{O}-\vec{C}$:
-$$
-\|(f+t\vec{D})\|^2\leq r^2
-$$
+
+![Equation](./images/eq5.svg)
+
 Expand:
-$$
-f^2+2t(fD)+t^2D^2=r^2
-$$
+
+![Equation](./images/eq6.svg)
+
 Now we can put the expression in terms of $t$ to get the quadratic equation:
-$$
-D^2t^2+2fDt+f^2-r^2=0
-$$
+
+![Equation](./images/eq7.svg)
+
 Now we can use the quadratic equation to determine **if** a collision has been made and **where** it was made.
-$$
-\text{Quadratic Equation}:t=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
-$$
+
+![Equation](./images/eq8.svg)
 
 ### `If` a collision has been made
 From the quadratic eqaution, we know that the discriminant $\Delta=b^2-4ac$ can tell us how many roots a quadratic equation has. 
-$$
-\begin{align*}
-\Delta&>0 \implies 2\;\text{distinct\;real\;roots}\\
-\Delta&=0 \implies 1\;\text{repeated\;real\;root}\\
-\Delta&<0 \implies \text{complex\;(imaginary)\;roots}
-\end{align*}
-$$
+
+![Equation](./images/eq9.svg)
+
 Or in our case:
-$$
-\begin{align*}
-\Delta&>0 \implies 2\;\text{collisions}\\
-\Delta&=0 \implies 1\;\text{collision\;(tangent\;line)}\\
-\Delta&<0 \implies \text{no\;collisions}
-\end{align*}
-$$
+
+![Equation](./images/eq10.svg)
+
 So to check if a collision has been made, we can save computing power by just calculating the discriminant and checking if it is greater than or equal to zero. Lets first remind ourselves of our quadratic:
-$$
-D^2t^2+2fDt+f^2-r^2=0
-$$
+
+![Equation](./images/eq11.svg)
+
 In this case:
-$$
-\begin{align*}
-a&=D^2=\vec{D}\cdot\vec{D}\\
-b&=2fD=2(\vec{O}-\vec{C})\cdot\vec{D}\\
-c&=f^2-r^2=(\vec{O}-\vec{C})\cdot(\vec{O}-\vec{C})-r^2
-\end{align*}
-$$
+
+![Equation](./images/eq12.svg)
+
 Therefore the discriminant $\Delta=b^2-4ac$ is:
-$$
-\Delta=(2(\vec{O}-\vec{C})\cdot\vec{D})^2-4(\vec{D}\cdot\vec{D})((\vec{O}-\vec{C})\cdot(\vec{O}-\vec{C})-r^2)
-$$
+
+![Equation](./images/eq13.svg)
 
 One note to be made is that, since $\vec{D}$ is a normalized (unit) vector, its magnitude is 1, which means: $$a=\vec{D}\cdot\vec{D}=\|\vec{D}\|=1$$
 
@@ -176,13 +162,13 @@ And if $\Delta\geq0$ we can use the quadratic formula to determine where the col
 
 ### `Where` the collision was made
 Previouslty we stated that the ray intersects a circular obstacle at $\vec{P}=\vec{O}+t\vec{D}$ for some $t\geq0$ sastisfying:
-$$
-\|\vec{P}-\vec{C}\|\leq r
-$$
+
+![Equation](./images/eq14.svg)
+
 Now that we have solved for the discriminant, we can easily solve for such $t$ and use it to compute the point $\vec{P}$ which would represent the point of intersection.
-$$
-t=\frac{-b\pm\sqrt{b^2-4ac}}{2a}=\frac{-b\pm\sqrt{\text{discriminant}}}{2a}
-$$
+
+![Equation](./images/eq15.svg)
+
 In C:
 ```C
 float t1 = ((-b - sqrt(discriminant)) / (2 * a));
