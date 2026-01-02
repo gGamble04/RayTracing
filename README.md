@@ -117,7 +117,7 @@ Expand:
 
 ![Equation](./images/eq6.svg)
 
-Now we can put the expression in terms of $t$ to get the quadratic equation:
+Now we can put the expression in terms of $t$ to get the quadratic:
 
 ![Equation](./images/eq7.svg)
 
